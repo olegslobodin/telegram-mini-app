@@ -9,6 +9,7 @@ import classNames from "classnames";
 
 const isCloudStorageSupported = WebApp.isVersionAtLeast(FEATURES.CLOUD_STORAGE);
 const isShowAlertSupported = WebApp.isVersionAtLeast(FEATURES.SHOW_ALERT);
+const firstName = WebApp.initDataUnsafe.user?.first_name;
 
 const showAlert = (message: string) => {
   if (isShowAlertSupported) {
@@ -86,7 +87,7 @@ function App() {
         <>
           <div className="card">
             <button onClick={handleIncrementClick}>
-              You clicked me {count} times
+              {firstName ? `${firstName}, you` : "You"} clicked me {count} times
             </button>
           </div>
           <div className="card">
