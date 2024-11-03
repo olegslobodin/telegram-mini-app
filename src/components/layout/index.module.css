@@ -1,4 +1,4 @@
-#root {
+:global(#root) {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -48,8 +48,4 @@
 
 .card {
   padding: 1em;
-}
-
-.read-the-docs {
-  color: #888;
 }
