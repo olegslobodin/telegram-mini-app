@@ -9,6 +9,7 @@ import { tryGetItem } from "../../utils";
 import { LayoutContext } from "../../contexts/layout";
 import { LAYOUT_ACTION } from "../../contexts/layout/reducer";
 import { DevInfo } from "../dev-info";
+import AuthInfo from "../auth/user-info";
 
 interface Props {
   children?: ReactNode;
@@ -70,6 +71,8 @@ function Layout({ children }: Props) {
       ) : (
         children
       )}
+
+      <AuthInfo />
     </>
   );
 }
