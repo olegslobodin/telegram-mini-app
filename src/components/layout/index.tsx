@@ -9,7 +9,8 @@ import { tryGetItem } from "../../utils";
 import { LayoutContext } from "../../contexts/layout";
 import { LAYOUT_ACTION } from "../../contexts/layout/reducer";
 import { DevInfo } from "../dev-info";
-import AuthInfo from "../auth/user-info";
+import UserInfo from "../auth/user-info";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface Props {
   children?: ReactNode;
@@ -17,15 +18,50 @@ interface Props {
 
 function Layout({ children }: Props) {
   const {
-    state: { count, isLoading },
+    state: { actionButtonClicksCount, isActionCounterLoading },
     dispatch: layoutDispatch,
   } = useContext(LayoutContext);
+
   const [isLogoAnimated, setIsLogoAnimated] = useState(true);
+
+  const {
+    isAuthenticated: isAuth0Authenticated,
+    isLoading: isAuthLoading,
+    getAccessTokenSilently,
+  } = useAuth0();
+
+  useEffect(() => {
+    if (isAuthLoading || !isAuth0Authenticated) {
+      return;
+    }
+
+    const setAccessTokenAsync = async () => {
+      try {
+        layoutDispatch({
+          type: LAYOUT_ACTION.AUTH_TOKEN_LOAD_START,
+        });
+
+        const token = await getAccessTokenSilently();
+
+        layoutDispatch({
+          type: LAYOUT_ACTION.AUTH_TOKEN_LOAD_SUCCESS,
+          payload: token,
+        });
+      } catch (error) {
+        console.error("Error getting token:", error);
+        layoutDispatch({
+          type: LAYOUT_ACTION.AUTH_TOKEN_LOAD_ERROR,
+        });
+      }
+    };
+
+    setAccessTokenAsync();
+  }, [isAuth0Authenticated, isAuthLoading]);
 
   useEffect(() => {
     const loadSavedCounter = async () => {
       const { error, result } = await tryGetItem(KEYS.CLICK_COUNTER);
-      let newCount = count;
+      let newCount = actionButtonClicksCount;
       if (error) {
         WebApp.showAlert(error);
       } else if (result) {
@@ -39,31 +75,33 @@ function Layout({ children }: Props) {
     };
 
     loadSavedCounter();
-  }, [count, layoutDispatch]);
+  }, [actionButtonClicksCount, layoutDispatch]);
 
   useEffect(() => {
-    if (isLogoAnimated && !isLoading) {
+    if (isLogoAnimated && !isActionCounterLoading) {
       setTimeout(() => {
         setIsLogoAnimated(false);
       }, 500 + Math.floor(Math.random() * 3000));
     }
-  }, [isLogoAnimated, isLoading]);
+  }, [isLogoAnimated, isActionCounterLoading]);
 
   return (
     <>
+      <UserInfo />
+
       <div>
         <img
           onClick={() => setIsLogoAnimated(true)}
           src={reactLogo}
           className={classNames(styles.logo, {
             [styles.animated]: isLogoAnimated,
-            [styles.reversed]: count % 2 == 1,
+            [styles.reversed]: actionButtonClicksCount % 2 == 1,
           })}
           alt="React logo"
         />
       </div>
 
-      {isLoading ? (
+      {isActionCounterLoading ? (
         <div className={styles.card}>
           <div>Loading your data...</div>
           <DevInfo />
@@ -71,8 +109,6 @@ function Layout({ children }: Props) {
       ) : (
         children
       )}
-
-      <AuthInfo />
     </>
   );
 }

@@ -3,13 +3,19 @@ import { layoutReducer } from "./reducer";
 import { ContextState } from "../../interfaces";
 
 export interface LayoutState {
-  count: number;
-  isLoading: boolean;
+  authToken: string | null;
+  actionButtonClicksCount: number;
+  isActionCounterLoading: boolean;
+  isAuthenticated: boolean;
+  isAuthTokenLoading: boolean;
 }
 
 const defaultValue: LayoutState = {
-  count: 0,
-  isLoading: true,
+  authToken: null,
+  actionButtonClicksCount: 0,
+  isActionCounterLoading: true,
+  isAuthenticated: false,
+  isAuthTokenLoading: false,
 };
 
 export const LayoutContext = createContext<ContextState<LayoutState>>({
