@@ -7,23 +7,27 @@ import {
   getPublicResource,
 } from "../../../services/messages";
 import { LayoutContext } from "../../../contexts/layout";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 const UserInfo = () => {
   const { user, isLoading } = useAuth0();
   const {
     state: { isAuthenticated, authToken },
   } = useContext(LayoutContext);
+  const [message, setMessage] = useState("");
 
   if (isLoading) {
     return <div>Loading auth data...</div>;
   }
 
-  const fetchResource = async (handler: Function) => {
-    const data = await handler(authToken);
-
-    console.log("Fetched message:");
-    console.log(JSON.stringify(data));
+  const fetchResource = async (
+    handler:
+      | typeof getPublicResource
+      | typeof getProtectedResource
+      | typeof getAdminResource
+  ) => {
+    const data = await handler(authToken!);
+    setMessage(data.text);
   };
 
   return isAuthenticated ? (
@@ -42,6 +46,7 @@ const UserInfo = () => {
           Fetch admin data
         </button>
         <LogoutButton />
+        <div>{message}</div>
       </div>
     )
   ) : (

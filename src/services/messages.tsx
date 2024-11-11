@@ -11,10 +11,15 @@ const get = async (url: string, authToken?: string) => {
   return response.ok ? await response.json() : null;
 };
 
-export const getPublicResource = () => get(`${VITE_API_URL}/messages/public`);
+export interface Message {
+  text: string;
+}
 
-export const getProtectedResource = (authToken: string) =>
-  get(`${VITE_API_URL}/messages/protected`, authToken);
+export const getPublicResource = (): Promise<Message> =>
+  get(`${VITE_API_URL}messages/public`);
 
-export const getAdminResource = (authToken: string) =>
-  get(`${VITE_API_URL}/messages/admin`, authToken);
+export const getProtectedResource = (authToken: string): Promise<Message> =>
+  get(`${VITE_API_URL}messages/protected`, authToken);
+
+export const getAdminResource = (authToken: string): Promise<Message> =>
+  get(`${VITE_API_URL}messages/admin`, authToken);
