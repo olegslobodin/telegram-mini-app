@@ -24,18 +24,14 @@ function Layout({ children }: Props) {
 
   const [isLogoAnimated, setIsLogoAnimated] = useState(true);
 
-  const {
-    isAuthenticated: isAuth0Authenticated,
-    isLoading: isAuthLoading,
-    getAccessTokenSilently,
-  } = useAuth0();
+  const { isLoading: isAuthLoading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    if (isAuthLoading || !isAuth0Authenticated) {
+    if (isAuthLoading) {
       return;
     }
 
-    const setAccessTokenAsync = async () => {
+    const trySetAccessTokenAsync = async () => {
       try {
         layoutDispatch({
           type: LAYOUT_ACTION.AUTH_TOKEN_LOAD_START,
@@ -55,8 +51,8 @@ function Layout({ children }: Props) {
       }
     };
 
-    setAccessTokenAsync();
-  }, [isAuth0Authenticated, isAuthLoading]);
+    trySetAccessTokenAsync();
+  }, [isAuthLoading, getAccessTokenSilently, layoutDispatch]);
 
   useEffect(() => {
     const loadSavedCounter = async () => {

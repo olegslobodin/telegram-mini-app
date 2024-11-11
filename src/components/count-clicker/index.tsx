@@ -6,6 +6,7 @@ import { KEYS } from "../../constants";
 import { LayoutContext } from "../../contexts/layout";
 import { DevInfo } from "../dev-info";
 import { LAYOUT_ACTION } from "../../contexts/layout/reducer";
+import { Button } from "@radix-ui/themes";
 
 const telegramFirstName = WebApp.initDataUnsafe.user?.first_name;
 const displayName = telegramFirstName ? `${telegramFirstName}, you` : "You";
@@ -26,15 +27,15 @@ function CountClicker() {
   return (
     <>
       <div className={styles.card}>
-        <button onClick={handleIncrementClick}>
+        <Button onClick={handleIncrementClick}>
           {`${displayName} clicked me ${actionButtonClicksCount} times`}
-        </button>
+        </Button>
       </div>
       <div className={styles.card}>
-        <button onClick={handleResetClick}>Reset</button>
+        <Button onClick={handleResetClick}>Reset</Button>
       </div>
       <div className={styles.card}>
-        <button
+        <Button
           onClick={() =>
             WebApp.showAlert(
               `Hello World! Current count is ${actionButtonClicksCount}`
@@ -42,7 +43,7 @@ function CountClicker() {
           }
         >
           Show Alert
-        </button>
+        </Button>
       </div>
       <div className={styles.card}>
         <DevInfo />
