@@ -16,9 +16,6 @@ const {
   VITE_AUTH_REDIRECT_URL,
 } = import.meta.env;
 
-if (DEV) {
-  location.hash = "#tgWebAppVersion=7.8";
-}
 WebApp.ready();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

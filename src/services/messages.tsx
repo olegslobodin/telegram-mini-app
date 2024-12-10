@@ -1,10 +1,11 @@
 const { VITE_API_URL } = import.meta.env;
 
-const get = async (url: string, authToken?: string) => {
+const get = async (url: string, authToken?: string, initData?: string) => {
   const response = await fetch(url, {
     headers: {
       Authorization: authToken ? `Bearer ${authToken}` : "",
       "Content-Type": "application/json",
+      "Telegram-Authorization": initData ?? "",
     },
   });
 
@@ -18,8 +19,14 @@ export interface Message {
 export const getPublicResource = (): Promise<Message> =>
   get(`${VITE_API_URL}messages/public`);
 
-export const getProtectedResource = (authToken: string): Promise<Message> =>
-  get(`${VITE_API_URL}messages/protected`, authToken);
+export const getProtectedResource = (
+  authToken: string,
+  initData: string
+): Promise<Message> =>
+  get(`${VITE_API_URL}messages/protected`, authToken, initData);
 
-export const getAdminResource = (authToken: string): Promise<Message> =>
-  get(`${VITE_API_URL}messages/admin`, authToken);
+export const getAdminResource = (
+  authToken: string,
+  initData: string
+): Promise<Message> =>
+  get(`${VITE_API_URL}messages/admin`, authToken, initData);

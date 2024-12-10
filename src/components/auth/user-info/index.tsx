@@ -1,4 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button, Text } from "@radix-ui/themes";
+import WebApp from "@twa-dev/sdk";
 import LogoutButton from "../logout-button";
 import LoginButton from "../login-button";
 import {
@@ -8,7 +10,6 @@ import {
 } from "../../../services/messages";
 import { LayoutContext } from "../../../contexts/layout";
 import { useContext, useState } from "react";
-import { Button, Text } from "@radix-ui/themes";
 
 const UserInfo = () => {
   const { user, isLoading } = useAuth0();
@@ -30,7 +31,7 @@ const UserInfo = () => {
   ) => {
     try {
       setIsFetchingMessage(true);
-      const data = await handler(authToken!);
+      const data = await handler(authToken!, WebApp.initData);
       setMessage(data.text);
     } catch (error) {
       console.log("Error fetching message");
@@ -40,41 +41,44 @@ const UserInfo = () => {
     }
   };
 
-  return isAuthenticated ? (
-    user && (
-      <>
+  return (
+    <>
+      {isAuthenticated && user ? (
         <div>
           <img src={user.picture} alt={user.name} />
           <h2>{user.name}</h2>
           <p>{user.email}</p>
-          <Button
-            onClick={() => fetchResource(getPublicResource)}
-            variant="soft"
-            loading={isFetchingMessage}
-          >
-            Fetch public data
-          </Button>
-          <Button
-            onClick={() => fetchResource(getProtectedResource)}
-            variant="soft"
-            loading={isFetchingMessage}
-          >
-            Fetch protected data
-          </Button>
-          <Button
-            onClick={() => fetchResource(getAdminResource)}
-            variant="soft"
-            loading={isFetchingMessage}
-          >
-            Fetch admin data
-          </Button>
           <LogoutButton />
         </div>
-        <Text>{message}</Text>
-      </>
-    )
-  ) : (
-    <LoginButton />
+      ) : (
+        <LoginButton />
+      )}
+
+      <div>
+        <Button
+          onClick={() => fetchResource(getPublicResource)}
+          variant="soft"
+          loading={isFetchingMessage}
+        >
+          Fetch public data
+        </Button>
+        <Button
+          onClick={() => fetchResource(getProtectedResource)}
+          variant="soft"
+          loading={isFetchingMessage}
+        >
+          Fetch protected data
+        </Button>
+        <Button
+          onClick={() => fetchResource(getAdminResource)}
+          variant="soft"
+          loading={isFetchingMessage}
+        >
+          Fetch admin data
+        </Button>
+      </div>
+      <Text>{message}</Text>
+    </>
   );
 };
 
